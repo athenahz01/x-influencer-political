@@ -271,14 +271,13 @@ function generateEdges(nodes: AccountNode[]): GraphEdge[] {
       const b = nodes[j];
       const leanDiff = Math.abs(a.lean - b.lean);
 
-      let prob = 0.0015;
-      if (leanDiff < 0.3) prob += 0.018;
-      else if (leanDiff < 0.6) prob += 0.008;
-      else if (leanDiff < 1.0) prob += 0.003;
+      let prob = 0.001;
+      if (leanDiff < 0.3) prob += 0.012;
+      else if (leanDiff < 0.6) prob += 0.005;
+      else if (leanDiff < 1.0) prob += 0.002;
 
-      if (a.scores.overall > 0.75 || b.scores.overall > 0.75) prob += 0.012;
-      if (a.scores.bridge > 0.6 || b.scores.bridge > 0.6) prob += 0.006;
-      if (a.category === b.category) prob += 0.004;
+      if (a.scores.overall > 0.75 || b.scores.overall > 0.75) prob += 0.006;
+      if (a.category === b.category) prob += 0.003;
 
       if (seededRandom() < prob) {
         edges.push({ source: a.id, target: b.id });
