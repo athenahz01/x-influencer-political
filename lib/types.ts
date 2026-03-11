@@ -33,10 +33,15 @@ export interface AccountNode {
   handle: string;
   role: string;
   followers: number;
+  following?: number;
+  avatarUrl?: string;
+  profileUrl?: string;
+  party?: string | null;
+  joinedAt?: string | null;
   category: Category;
-  lean: number; // -1.5 (left) to +1.5 (right)
+  lean: number;
   scores: Scores;
-  val: number; // physical node size
+  val: number;
   rank: number;
   // Runtime — populated after graph init
   neighbors: AccountNode[];

@@ -36,21 +36,28 @@ export async function fetchGraphData(): Promise<{
       overall: acc.score_overall || 0,
     };
 
-    return {
-      id: acc.handle,
-      name: acc.display_name,
-      handle: acc.handle,
-      role: acc.bio || acc.subcategory || '',
-      followers: acc.followers_count || 0,
-      category,
-      lean: acc.lean || 0,
-      scores,
-      val: Math.max(1.5, scores.overall * 7),
-      rank: index + 1,
-      neighbors: [],
-      links: [],
-    };
-  });
+    const cleanHandle = acc.handle.replace('@', '');
+      
+      return {
+        id: acc.handle,
+        name: acc.display_name,
+        handle: acc.handle,
+        role: acc.bio || acc.subcategory || '',
+        followers: acc.followers_count || 0,
+        following: acc.following_count || 0,
+        avatarUrl: `https://unavatar.io/x/${cleanHandle}`,
+        profileUrl: `https://x.com/${cleanHandle}`,
+        party: acc.party || null,
+        joinedAt: acc.joined_at || null,
+        category,
+        lean: acc.lean || 0,
+        scores,
+        val: Math.max(1.5, scores.overall * 7),
+        rank: index + 1,
+        neighbors: [],
+        links: [],
+      };
+    });
 
   // Build handle set for validation
   const handleSet = new Set(nodes.map((n) => n.id));
@@ -76,5 +83,18 @@ export async function fetchGraphData(): Promise<{
     }
   });
 
-  return { nodes, links };
+  // Filter out isolated nodes (no connections) — they add visual noise
+  const connectedNodes = nodes.filter((n) => n.neighbors.length > 0);
+  
+  // Re-rank after filtering
+  connectedNodes.sort((a, b) => b.scores.overall - a.scores.overall);
+  connectedNodes.forEach((n, i) => (n.rank = i + 1));
+
+  // Only keep links between connected nodes
+  const connectedIds = new Set(connectedNodes.map((n) => n.id));
+  const connectedLinks = links.filter(
+    (l) => connectedIds.has(l.source as string) && connectedIds.has(l.target as string)
+  );
+
+  return { nodes: connectedNodes, links: connectedLinks };
 }

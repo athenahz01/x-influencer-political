@@ -188,8 +188,9 @@ export function GraphCanvas({ graphData }: GraphCanvasProps) {
         .onNodeClick((node: any) => { setSelectedNode(node); })
         .onBackgroundClick(() => { setSelectedNode(null); });
 
-      Graph.d3Force('charge')?.strength(-50);
-      Graph.d3Force('link')?.distance(25);
+      Graph.d3Force('charge')?.strength(-30);
+      Graph.d3Force('link')?.distance(20);
+      Graph.d3Force('center')?.strength(0.05);
 
       setTimeout(() => Graph.cameraPosition({ x: 0, y: 0, z: 500 }), 100);
 
