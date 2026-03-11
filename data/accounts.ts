@@ -5,9 +5,15 @@ import { computeOverallScore } from '@/lib/scoring';
 // ============================================
 // Helpers
 // ============================================
+let _seed = 42;
+function seededRandom(): number {
+  _seed = (_seed * 16807 + 0) % 2147483647;
+  return (_seed - 1) / 2147483646;
+}
+
 const clamp = (v: number, lo = 0.05, hi = 0.99) => Math.min(hi, Math.max(lo, v));
 const jit = (base: number, range = 0.08) =>
-  clamp(base + (Math.random() - 0.5) * range * 2);
+  clamp(base + (seededRandom() - 0.5) * range * 2);
 
 let _id = 0;
 function makeNode(
@@ -219,7 +225,7 @@ const procData: Record<string, ProcEntry[]> = {
 Object.entries(procData).forEach(([catKey, people]) => {
   const cat = CATEGORIES[catKey as keyof typeof CATEGORIES];
   people.forEach((p) => {
-    const followers = Math.floor(Math.pow(10, Math.random() * 2.5 + 4));
+    const followers = Math.floor(Math.pow(10, seededRandom() * 2.5 + 4));
     seedNodes.push(
       makeNode(`proc_${_id++}`, p[0], p[1], p[2], cat, followers, p[3])
     );
@@ -235,12 +241,12 @@ const gRoles = ['Political Analyst', 'Policy Director', 'National Reporter', 'Ca
 const allCats = Object.values(CATEGORIES);
 
 while (seedNodes.length < 300) {
-  const cat = allCats[Math.floor(Math.random() * allCats.length)];
-  const fn = gFirstNames[Math.floor(Math.random() * gFirstNames.length)];
-  const ln = gLastNames[Math.floor(Math.random() * gLastNames.length)];
-  const role = gRoles[Math.floor(Math.random() * gRoles.length)];
-  const followers = Math.floor(Math.pow(10, Math.random() * 2.5 + 3.5));
-  const lean = Math.random() * 3 - 1.5;
+  const cat = allCats[Math.floor(seededRandom() * allCats.length)];
+  const fn = gFirstNames[Math.floor(seededRandom() * gFirstNames.length)];
+  const ln = gLastNames[Math.floor(seededRandom() * gLastNames.length)];
+  const role = gRoles[Math.floor(seededRandom() * gRoles.length)];
+  const followers = Math.floor(Math.pow(10, seededRandom() * 2.5 + 3.5));
+  const lean = seededRandom() * 3 - 1.5;
   seedNodes.push(
     makeNode(
       `gen_${_id++}`,
@@ -274,7 +280,7 @@ function generateEdges(nodes: AccountNode[]): GraphEdge[] {
       if (a.scores.bridge > 0.6 || b.scores.bridge > 0.6) prob += 0.006;
       if (a.category === b.category) prob += 0.004;
 
-      if (Math.random() < prob) {
+      if (seededRandom() < prob) {
         edges.push({ source: a.id, target: b.id });
       }
     }
