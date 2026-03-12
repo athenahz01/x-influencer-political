@@ -3,12 +3,18 @@
 // ============================================
 
 export type CategoryId =
-  | 'politician'
-  | 'journalist'
-  | 'podcast'
-  | 'media'
-  | 'commentator'
-  | 'strategist';
+  | 'fashion'
+  | 'beauty'
+  | 'fitness'
+  | 'food'
+  | 'travel'
+  | 'tech'
+  | 'comedy'
+  | 'education'
+  | 'art'
+  | 'photography'
+  | 'parenting'
+  | 'music';
 
 export interface Category {
   id: CategoryId;
